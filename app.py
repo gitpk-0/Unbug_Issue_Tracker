@@ -1,3 +1,4 @@
+from crypt import methods
 import os
 import psycopg2
 
@@ -60,7 +61,6 @@ def index():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users;')
     users = cur.fetchall()
-    print(users)
     cur.close()
     conn.close()
 
@@ -90,15 +90,8 @@ def login():
         # Query database for username
         db.execute('SELECT * from users WHERE username = %s;', (username,))
         rows = db.fetchall()
-        print(len(rows))
-        print(rows[0][2])
 
         pw_hash = rows[0][2]
-        print(type(pw))
-        print(type(pw_hash))
-        print(len(rows) == 1)
-
-        print(check_password_hash(pw_hash, pw))
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(pw_hash, pw):
@@ -114,3 +107,66 @@ def login():
     # User reached route via GET
     else:
         return render_template("login.html")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """  Register user  """
+
+    # Forget any user_id
+    session.clear()
+
+    if request.method == "GET":
+        return render_template("register.html")
+
+    # User reached route via POST
+    if request.method == "POST":
+        username = request.form.get("username")
+        pw = request.form.get("password")
+        pw_confirm = request.form.get("confirmation")
+
+        # Ensure username was submitted
+        if not username:
+            return apology("must provide username")
+
+        elif not pw:
+            return apology("must provide password")
+
+        elif not pw == pw_confirm:
+            return apology("passwords do not match")
+
+        # Generate a hash of the password
+        pw_hash = generate_password_hash(pw)
+
+        db.execute(
+            'SELECT username FROM users WHERE username = %s', (username,))
+        in_use = db.fetchall()
+        print(in_use)
+        print(in_use == [])
+
+        if in_use == []:
+            db.execute(
+                'INSERT INTO users(username, hash) VALUES (%s, %s)', (username, pw_hash))
+            conn.commit()  # commit changes to database
+        else:
+            return apology("username already taken")
+
+        # Remember which user has logged in
+        db.execute('SELECT * FROM users WHERE username = %s', (username,))
+        rows = db.fetchall()
+        user_id = rows[0][0]
+        session["user_id"] = user_id
+
+        # Redirect new user to index page
+        return redirect("/")
+
+
+@app.route("/logout")
+def logout():
+    """Log user out"""
+
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to login form
+    return redirect("/")
