@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 
-from issue_tracker.helpers import apology
+from helpers import apology, login_required
 
 # from helpers import apology, login_required, lookup, usd
 
@@ -39,7 +39,7 @@ def get_db_connection():
     return conn
 
 
-conn = get_db_connection
+conn = get_db_connection()
 db = conn.cursor()  # Database connection
 
 
@@ -53,13 +53,14 @@ def after_request(response):
 
 
 @app.route("/")
-@login_requirred
+# @login_required
 def index():
     """ Landing page """
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT * FROM users;')
     users = cur.fetchall()
+    print(users)
     cur.close()
     conn.close()
 
@@ -87,14 +88,29 @@ def login():
             return apology("no password entered", 403)
 
         # Query database for username
-        rows = db.execute("SELECT * from users WHERE username = ?", username)
+        db.execute('SELECT * from users WHERE username = %s;', (username,))
+        rows = db.fetchall()
+        print(len(rows))
+        print(rows[0][2])
+
+        pw_hash = rows[0][2]
+        print(type(pw))
+        print(type(pw_hash))
+        print(len(rows) == 1)
+
+        print(check_password_hash(pw_hash, pw))
 
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], pw):
+        if len(rows) != 1 or not check_password_hash(pw_hash, pw):
             return apology("invalid username or password", 403)
 
         # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
+        user_id = rows[0][0]
+        session["user_id"] = user_id
 
         # Redirect user to home page
         return redirect("/")
+
+    # User reached route via GET
+    else:
+        return render_template("login.html")
