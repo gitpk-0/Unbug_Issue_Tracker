@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+
+
+{% block main %}
+<h1>{% block title %} Users {% endblock %}</h1>
+{% for user in users %}
+<div class='user'>
+    <h3>#{{ user[0] }} - {{ user[1] }} {{ user[2] }}</h3>
+    <i>
+        <!-- <p>({{ user[3] }} pages)</p> -->
+    </i>
+    <!-- <p class='review'>{{ user[4] }}</p> -->
+    <i>
+        <!-- <p>Added {{ user[5] }}</p> -->
+    </i>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,6 +1,7 @@
 import os
+import psycopg2
 
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, url_for, session
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -22,10 +23,18 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-uri = os.getenv("DATABASE_URL")
-if uri.startswith("postgres://"):
-    uri = uri.replace("postgres://", "postgresql://")
-db = SQL(uri)
+# uri = os.getenv("DATABASE_URL")
+# if uri.startswith("postgres://"):
+#     uri = uri.replace("postgres://", "postgresql://")
+# db = SQL(uri)
+
+
+def get_db_connection():
+    conn = psycopg2.connect(host='localhost',
+                            database='unbug_db',
+                            user=os.environ['DB_USERNAME'],
+                            password=os.environ['DB_PASSWORD'])
+    return conn
 
 
 @app.after_request
@@ -38,6 +47,14 @@ def after_request(response):
 
 
 @app.route("/")
-@login_requirred
+# @login_requirred
 def index():
     """ Landing page """
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users;')
+    users = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return render_template('index.html', users=users)
