@@ -13,17 +13,28 @@ conn = psycop.connect(
 cur = conn.cursor()
 
 # Execute a command: this creates a new table
+cur.execute('DROP TABLE IF EXISTS issues')
 cur.execute('DROP TABLE IF EXISTS users')
+
 cur.execute('CREATE TABLE users (id SERIAL PRIMARY KEY NOT NULL,'
             'username TEXT NOT NULL,'
             'hash TEXT NOT NULL);')
 
-# Insert data into the table
-cur.execute('INSERT INTO users (id, username, hash) VALUES (%s, %s, %s)',
-            (0, 'test_user', 'test_hash'))
+cur.execute('CREATE TABLE issues (user_id SERIAL NOT NULL,'
+            'subject TEXT NOT NULL,'
+            'summary TEXT NOT NULL,'
+            'reporter TEXT NOT NULL,'
+            'date_time TEXT NOT NULL,'
+            'status TEXT NOT NULL,'
+            'priority TEXT NOT NULL,'
+            'CONSTRAINT fk_issues FOREIGN KEY(user_id) REFERENCES users(id));')
 
-cur.execute('INSERT INTO users (id, username, hash) VALUES (%s, %s, %s)',
-            (1, 'test_user2', 'test_hash2'))
+# # Insert data into the table
+# cur.execute('INSERT INTO users (id, username, hash) VALUES (%s, %s, %s)',
+#             (0, 'test_user', 'test_hash'))
+
+# cur.execute('INSERT INTO users (id, username, hash) VALUES (%s, %s, %s)',
+#             (1, 'test_user2', 'test_hash2'))
 
 conn.commit()
 cur.close()

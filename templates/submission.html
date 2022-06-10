@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block title %} New Issue Summary {% endblock %}
+
+{% block main %}
+<form action="/new_issue" method="post">
+    <div>{{ subject }}</div>
+    <div>{{ summary }}</div>
+</form>
+{% endblock %}

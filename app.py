@@ -90,6 +90,7 @@ def login():
         # Query database for username
         db.execute('SELECT * from users WHERE username = %s;', (username,))
         rows = db.fetchall()
+        print(rows)
 
         pw_hash = rows[0][2]
 
@@ -170,3 +171,21 @@ def logout():
 
     # Redirect user to login form
     return redirect("/")
+
+
+@app.route("/new_issue", methods=["GET", "POST"])
+def new_issue():
+    """ Report a new issue """
+
+    # Display form to report a new issue
+    if request.method == "GET":
+        return render_template("new_issue.html")
+
+    # Display summary of submission
+    if request.method == "POST":
+
+        # Form info
+        subject = request.form.get("subject")
+        summary = request.form.get("summary")
+
+        return render_template("submission.html", subject=subject, summary=summary)
