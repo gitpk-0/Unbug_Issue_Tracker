@@ -3,8 +3,44 @@
 {% block title %} New Issue Summary {% endblock %}
 
 {% block main %}
-<form action="/new_issue" method="post">
-    <div>{{ subject }}</div>
-    <div>{{ summary }}</div>
-</form>
+<header>
+    <div class="alert alert-primary mb-0 text-center" role="alert">Issue Submitted</div>
+</header>
+<br>
+<div ms-auto>
+    <h4>Submission Summary</h4>
+</div>
+
+<table class="table table-striped" style="table-layout: auto; width: 100%">
+    <thead>
+        <tr>
+            <th class="text-start">Subject</th>
+            <th class="text-start">Summary</th>
+            <th class="text-end">Priority</th>
+            <th class="text-end">Status</th>
+            <th class="text-end">Time</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td class="text-start">{{ subject }}</td>
+            <td class="text-start" style="word-wrap: break-word">{{ summary }}</td>
+            <td class="text-end">{{ priority }}</td>
+            <td class="text-end">{{ status }}</td>
+            <td class="text-end">{{ time }}</td>
+        </tr>
+
+    </tbody>
+    <tfoot>
+        <!-- <tr>
+            <td class="border-0 fw-bold text-end" colspan="4">Cash Remaining</td>
+            <td class="border-0 text-end">{{ cash_remaining }}</td>
+        </tr> -->
+        <!-- <tr>
+            <td class="border-0 fw-bold text-end" colspan="4">TOTAL</td>
+            <td class="border-0 w-bold text-end">{{ total }}</td>
+        </tr> -->
+    </tfoot>
+</table>
 {% endblock %}

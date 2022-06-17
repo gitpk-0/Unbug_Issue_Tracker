@@ -3,17 +3,43 @@
 
 
 {% block main %}
-<h1>{% block title %} Users {% endblock %}</h1>
-{% for user in users %}
-<div class='user'>
-    <h3>#{{ user[0] }} - {{ user[1] }} {{ user[2] }}</h3>
-    <i>
-        <!-- <p>({{ user[3] }} pages)</p> -->
-    </i>
-    <!-- <p class='review'>{{ user[4] }}</p> -->
-    <i>
-        <!-- <p>Added {{ user[5] }}</p> -->
-    </i>
+<h1>{% block title %} Issues {% endblock %}</h1>
+<div class='issue'>
+    <!-- {% for issue in issues %}
+    <h3>{{ issue }}</h3>
+    {% endfor %} -->
+    <table class="table table-striped" style="table-layout: auto; width: 100%">
+        <thead>
+            <tr>
+                <th class="text-start">User ID</th>
+                <th class="text-start">Subject</th>
+                <th class="text-end">Summary</th>
+                <th class="text-end">Reporter</th>
+                <th class="text-end">Date</th>
+                <th class="text-end">Status</th>
+                <th class="text-end">Priority</th>
+                <th class="text-end">Issue ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for issue in issues %}
+            <tr>
+                <td class="text-start">{{ issue[0] }}</td>
+                <td class="text-start" style="word-wrap: break-word">{{ issue[1] }}</td>
+                <td class="text-start" style="word-wrap: break-word">{{ issue[2] }}</td>
+                <td class="text-end">{{ issue[3] }}</td>
+                <td class="text-end">{{ issue[4] }}</td>
+                <td class="text-end">{{ issue[5] }}</td>
+                <td class="text-end">{{ issue[6] }}</td>
+                <td class="text-end">{{ issue[7] }}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+        <tfoot>
+        </tfoot>
+    </table>
+
 </div>
-{% endfor %}
+
 {% endblock %}

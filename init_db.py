@@ -27,6 +27,8 @@ cur.execute('CREATE TABLE issues (user_id SERIAL NOT NULL,'
             'date_time TEXT NOT NULL,'
             'status TEXT NOT NULL,'
             'priority TEXT NOT NULL,'
+            'issue_num SERIAL NOT NULL,'
+            'comments TEXT NOT NULL,'
             'CONSTRAINT fk_issues FOREIGN KEY(user_id) REFERENCES users(id));')
 
 # # Insert data into the table

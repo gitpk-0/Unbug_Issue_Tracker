@@ -54,17 +54,17 @@ def after_request(response):
 
 
 @app.route("/")
-# @login_required
+@login_required
 def index():
     """ Landing page """
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users;')
-    users = cur.fetchall()
+    cur.execute('SELECT * FROM issues;')
+    issues = cur.fetchall()
     cur.close()
     conn.close()
 
-    return render_template('index.html', users=users)
+    return render_template('index.html', issues=issues)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -88,9 +88,12 @@ def login():
             return apology("no password entered", 403)
 
         # Query database for username
-        db.execute('SELECT * from users WHERE username = %s;', (username,))
-        rows = db.fetchall()
-        print(rows)
+        try:
+            db.execute('SELECT * from users WHERE username = %s;', (username,))
+            rows = db.fetchall()
+            print(rows)
+        except:
+            return apology("something went wrong 1")
 
         pw_hash = rows[0][2]
 
@@ -139,18 +142,19 @@ def register():
         # Generate a hash of the password
         pw_hash = generate_password_hash(pw)
 
-        db.execute(
-            'SELECT username FROM users WHERE username = %s', (username,))
-        in_use = db.fetchall()
-        print(in_use)
-        print(in_use == [])
-
-        if in_use == []:
+        try:
             db.execute(
-                'INSERT INTO users(username, hash) VALUES (%s, %s)', (username, pw_hash))
-            conn.commit()  # commit changes to database
-        else:
-            return apology("username already taken")
+                'SELECT username FROM users WHERE username = %s', (username,))
+            in_use = db.fetchall()
+
+            if in_use == []:
+                db.execute(
+                    'INSERT INTO users(username, hash) VALUES (%s, %s)', (username, pw_hash))
+                conn.commit()  # commit changes to database
+            else:
+                return apology("username already taken")
+        except:
+            return apology("something went wrong 2")
 
         # Remember which user has logged in
         db.execute('SELECT * FROM users WHERE username = %s', (username,))
@@ -174,8 +178,19 @@ def logout():
 
 
 @app.route("/new_issue", methods=["GET", "POST"])
+@login_required
 def new_issue():
     """ Report a new issue """
+
+    # Current user
+    user_id = session["user_id"]
+    db.execute('SELECT username FROM users WHERE id = %s', (user_id,))
+    rows = db.fetchall()
+    username = rows[0][0]
+
+    # Current time
+    dt = datetime.now()
+    now = dt.strftime('%b %d  %H:%M%p')
 
     # Display form to report a new issue
     if request.method == "GET":
@@ -187,5 +202,29 @@ def new_issue():
         # Form info
         subject = request.form.get("subject")
         summary = request.form.get("summary")
+        priority = request.form.get("priority")
 
-        return render_template("submission.html", subject=subject, summary=summary)
+        db.execute(
+            'INSERT INTO issues(user_id, subject, summary, reporter, date_time, status, priority) VALUES (%s, %s, %s, %s, %s, %s, %s)', (user_id, subject, summary, username, now, "OPEN", priority))
+        conn.commit()  # commit changes to database
+
+        db.execute(
+            'SELECT * FROM issues WHERE subject = %s AND summary = %s', (subject, summary))
+        rows = db.fetchall()
+
+        time = rows[0][4]
+        status = rows[0][5]
+
+        return render_template("submission.html", subject=subject, summary=summary, priority=priority, username=username, time=time, status=status)
+
+
+@app.route("/in_progress", methods=["GET", "POST"])
+@login_required
+def in_progress():
+    """ Update status of issue to in progress """
+
+    # Current user
+    user_id = session["user_id"]
+    db.execute('SELECT username FROM users WHERE id = %s', (user_id,))
+    rows = db.fetchall()
+    username = rows[0][0]
