@@ -91,11 +91,13 @@ def login():
         try:
             db.execute('SELECT * from users WHERE username = %s;', (username,))
             rows = db.fetchall()
+            pw_hash = rows[0][2]
             print(rows)
         except:
             return apology("something went wrong 1")
 
-        pw_hash = rows[0][2]
+        # may need to remove:
+        # pw_hash = rows[0][2]
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(pw_hash, pw):
@@ -218,9 +220,9 @@ def new_issue():
         return render_template("submission.html", subject=subject, summary=summary, priority=priority, username=username, time=time, status=status)
 
 
-@app.route("/in_progress", methods=["GET", "POST"])
+@app.route("/update_issue", methods=["GET", "POST"])
 @login_required
-def in_progress():
+def update_issue():
     """ Update status of issue to in progress """
 
     # Current user
@@ -228,3 +230,33 @@ def in_progress():
     db.execute('SELECT username FROM users WHERE id = %s', (user_id,))
     rows = db.fetchall()
     username = rows[0][0]
+
+    if request.method == "GET":
+        db.execute('SELECT * FROM issues WHERE issue_status="IN PROGRESS"')
+
+
+@app.route("/open_ticket", methods=["GET", "POST"])
+@login_required
+def open_ticket():
+    """ Open the ticket to make updates to comment and status """
+
+    # Current user
+    user_id = session["user_id"]
+    db.execute('SELECT username FROM users WHERE id = %s', (user_id,))
+    rows = db.fetchall()
+    username = rows[0][0]
+
+    if request.method == "GET":
+        # TODO: pass issue_num of specific issue here
+
+        issue_num = request.form.get("issue_num")
+        print(f"ISSUE ID::::: {issue_num}")
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM issues WHERE issue_num = %s', (issue_num,))
+        issue = cur.fetchall()
+        print(f"Ticket::::::: {issue}")
+        cur.close()
+        conn.close()
+        return render_template("open_ticket.html", issue_num=issue_num, issue=issue)

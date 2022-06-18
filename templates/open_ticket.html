@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %} Report an Issue {% endblock %}
+
+{% block main %}
+<table class="table table-striped" style="table-layout: auto; width: 100%">
+    <thead>
+        <tr>
+            <th class="text-start">User ID</th>
+            <th class="text-start">Subject</th>
+            <th class="text-end">Summary</th>
+            <th class="text-end">Reporter</th>
+            <th class="text-end">Date</th>
+            <th class="text-end">Status</th>
+            <th class="text-end">Priority</th>
+            <th class="text-end">Issue ID</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-start">{{ issue[0] }}</td>
+            <td class="text-start" style="word-wrap: break-word">{{ issue[1] }}</td>
+            <td class="text-start" style="word-wrap: break-word">{{ issue[2] }}</td>
+            <td class="text-end">{{ issue[3] }}</td>
+            <td class="text-end">{{ issue[4] }}</td>
+            <td class="text-end">{{ issue[5] }}</td>
+            <td class="text-end">{{ issue[6] }}</td>
+            <td class="text-end" id="issue_id">{{ issue[7] }}</td>
+        </tr>
+
+
+    </tbody>
+</table>
+<div>
+    <form>
+        <div class="mb-3">
+            <textarea rows="5" cols="80" autocomplete="off" autofocus class="form-control mx-auto w-auto" id="comments"
+                name="comments" placeholder="Actions taken to resolve this issue" type="text"></textarea>
+        </div>
+        <div class="mb-3">
+            <select class="form-select mx-auto w-auto" name="priority">
+                <option disabled selected>Update Status</option>
+                <option value="IN PROGRESS">In Progress</option>
+                <option value="RESOLVED">Resolved</option>
+                <option value="OPEN">Leave Open</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

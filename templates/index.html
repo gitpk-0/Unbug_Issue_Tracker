@@ -19,19 +19,25 @@
                 <th class="text-end">Status</th>
                 <th class="text-end">Priority</th>
                 <th class="text-end">Issue ID</th>
+                <th class="text-end">Open Ticket</th>
             </tr>
         </thead>
         <tbody>
             {% for issue in issues %}
             <tr>
-                <td class="text-start">{{ issue[0] }}</td>
-                <td class="text-start" style="word-wrap: break-word">{{ issue[1] }}</td>
-                <td class="text-start" style="word-wrap: break-word">{{ issue[2] }}</td>
-                <td class="text-end">{{ issue[3] }}</td>
-                <td class="text-end">{{ issue[4] }}</td>
-                <td class="text-end">{{ issue[5] }}</td>
-                <td class="text-end">{{ issue[6] }}</td>
-                <td class="text-end">{{ issue[7] }}</td>
+                <form action="/open_ticket" methods="post">
+                    <td class="text-start">{{ issue[0] }}</td>
+                    <td class="text-start" style="word-wrap: break-word">{{ issue[1] }}</td>
+                    <td class="text-start" style="word-wrap: break-word">{{ issue[2] }}</td>
+                    <td class="text-end">{{ issue[3] }}</td>
+                    <td class="text-end">{{ issue[4] }}</td>
+                    <td class="text-end">{{ issue[5] }}</td>
+                    <td class="text-end">{{ issue[6] }}</td>
+                    <td class="text-end" id="issue_num" name="issue_num">{{ issue[7] }}</td>
+                    <td class="text-end">
+                        <button class="btn btn-primary" type="submit">Open</button>
+                    </td>
+                </form>
             </tr>
             {% endfor %}
 
