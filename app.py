@@ -203,6 +203,7 @@ def new_issue():
 
         # Form info
         subject = request.form.get("subject")
+        print(subject)
         summary = request.form.get("summary")
         priority = request.form.get("priority")
 
@@ -249,7 +250,7 @@ def open_ticket():
     if request.method == "GET":
         # TODO: pass issue_num of specific issue here
 
-        issue_num = request.form.get("issue_num")
+        issue_num = request.values.get("issue_num")
         print(f"ISSUE ID::::: {issue_num}")
 
         conn = get_db_connection()

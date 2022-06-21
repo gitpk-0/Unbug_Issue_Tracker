@@ -5,9 +5,6 @@
 {% block main %}
 <h1>{% block title %} Issues {% endblock %}</h1>
 <div class='issue'>
-    <!-- {% for issue in issues %}
-    <h3>{{ issue }}</h3>
-    {% endfor %} -->
     <table class="table table-striped" style="table-layout: auto; width: 100%">
         <thead>
             <tr>
@@ -33,9 +30,10 @@
                     <td class="text-end">{{ issue[4] }}</td>
                     <td class="text-end">{{ issue[5] }}</td>
                     <td class="text-end">{{ issue[6] }}</td>
-                    <td class="text-end" id="issue_num" name="issue_num">{{ issue[7] }}</td>
+                    <td class="text-end" id="{{ issue[7] }}" value="{{ issue[7] }}" name="issue_num">{{ issue[7] }}</td>
                     <td class="text-end">
-                        <button class="btn btn-primary" type="submit">Open</button>
+                        <button class="btn btn-primary" type="submit" value="{{ issue[7] }}"
+                            name="issue_num">Open</button>
                     </td>
                 </form>
             </tr>
